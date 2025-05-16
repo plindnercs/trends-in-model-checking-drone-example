@@ -1,0 +1,6 @@
+Pmax=? [ F "reachedTarget" ]
+
+R{"deliveries"}max=? [ F "reachedTarget" ]
+
+Pmin=? [ F "reachedTarget" ]
+
