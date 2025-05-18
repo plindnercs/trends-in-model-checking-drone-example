@@ -1,0 +1,80 @@
+mdp
+
+const gridSize = 4;
+
+const int rewardD1 = 5;
+const int rewardD2 = 10;
+
+// Wind Probabilities (sum must be smaller than 1, each wind direction must be larger than 0 => graph preservation)
+// going to the left
+const double pWindLeft  = 0.1;
+// going to the right
+const double pWindRight = 0.3; // turning point at ~ 0.265
+// going up
+const double pWindUp    = 0.1; // 0.0;
+// going down
+const double pWindDown  = 0.1; // 0.2;
+
+// Locations
+formula reachedTarget = (posX = (gridSize - 1)) & (posY = (gridSize - 1));
+
+// Compute how much drift is allowed based on current position
+// For RIGHT movement
+formula pDriftUpForRightMove    = (posY > 0               ? pWindUp    : 0.0);
+formula pDriftDownForRightMove  = (posY < (gridSize - 1)  ? pWindDown  : 0.0);
+formula pDriftLeftForRightMove  = (posX > 0               ? pWindLeft  : 0.0);
+formula pTotalDriftForRightMove = pDriftUpForRightMove + pDriftDownForRightMove + pDriftLeftForRightMove;
+formula pForRightMove           = 1 - pTotalDriftForRightMove;
+
+// For DOWN movement
+formula pDriftLeftForDownMove   = (posX > 0        	  ? pWindLeft  : 0.0);
+formula pDriftRightForDownMove  = (posX < (gridSize - 1)  ? pWindRight : 0.0);
+formula pDriveUpForDownMove     = (posY > 0               ? pWindUp    : 0.0);
+formula pTotalDriftForDownMove  = pDriftLeftForDownMove + pDriftRightForDownMove + pDriveUpForDownMove;
+formula pForDownMove            = 1 - pTotalDriftForDownMove;
+
+
+module Drone
+
+	posX : [0 .. gridSize] init 0;
+	posY : [0 .. gridSize] init 0;
+
+	d1 : bool init false;
+	d2 : bool init false;
+
+	// RIGHT movement
+	[right] (posX < gridSize - 1 & !reachedTarget) ->
+		pForRightMove          : (posX' = posX + 1)  & (d1' = updateD1) & (d2' = updateD2) +
+		pDriftLeftForRightMove : (posX' = posX)      & (d1' = updateD1) & (d2' = updateD2) +
+		pDriftUpForRightMove   : (posX' = posX + 1) & (posY' = posY - 1) & (d1' = updateD1) & (d2' = updateD2) +
+		pDriftDownForRightMove : (posX' = posX + 1) & (posY' = posY + 1) & (d1' = updateD1) & (d2' = updateD2);
+
+	// DOWN movement
+	[down] (posY < gridSize - 1 & !reachedTarget) ->
+		pForDownMove           : (posY' = posY + 1)  & (d1' = updateD1) & (d2' = updateD2) +
+		pDriftLeftForDownMove  : (posX' = posX - 1) & (posY' = posY + 1) & (d1' = updateD1) & (d2' = updateD2) +
+		pDriftRightForDownMove : (posX' = posX + 1) & (posY' = posY + 1) & (d1' = updateD1) & (d2' = updateD2) +
+		pDriveUpForDownMove    : (posY' = posY)     & (d1' = updateD1) & (d2' = updateD2);
+
+	[] reachedTarget -> true;
+
+endmodule
+
+// Functions to update delivery flags
+formula atD1 = (posX = 2) & (posY = 0);
+formula atD2 = (posX = 0) & (posY = 3);
+
+formula updateD1 = d1 | atD1;
+formula updateD2 = d2 | atD2;
+
+// Rewards only on collection
+rewards "deliveries"
+    	[right] (atD1 & !d1) : rewardD1;
+	[down] (atD1 & !d1) : rewardD1;
+    	[right] (atD2 & !d2) : rewardD2;
+	[down] (atD2 & !d2) : rewardD2;
+endrewards
+
+label "reachedTarget" = reachedTarget;
+label "collectedDeliveryOne" = d1;
+label "collectedDeliveryTwo" = d2;
