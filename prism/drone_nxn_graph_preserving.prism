@@ -9,7 +9,7 @@ const int rewardD2 = 10;
 // going to the left
 const double pWindLeft  = 0.1;
 // going to the right
-const double pWindRight = 0.3; // turning point at ~ 0.265
+const double pWindRight = 0.1; // turning point at ~ 0.265
 // going up
 const double pWindUp    = 0.1; // 0.0;
 // going down
@@ -22,14 +22,14 @@ formula reachedTarget = (posX = (gridSize - 1)) & (posY = (gridSize - 1));
 // For RIGHT movement
 formula pDriftUpForRightMove    = (posY > 0               ? pWindUp    : 0.0);
 formula pDriftDownForRightMove  = (posY < (gridSize - 1)  ? pWindDown  : 0.0);
-formula pDriftLeftForRightMove  = (posX > 0               ? pWindLeft  : 0.0);
+formula pDriftLeftForRightMove  = (posX >= 0               ? pWindLeft  : 0.0);
 formula pTotalDriftForRightMove = pDriftUpForRightMove + pDriftDownForRightMove + pDriftLeftForRightMove;
 formula pForRightMove           = 1 - pTotalDriftForRightMove;
 
 // For DOWN movement
 formula pDriftLeftForDownMove   = (posX > 0        	  ? pWindLeft  : 0.0);
 formula pDriftRightForDownMove  = (posX < (gridSize - 1)  ? pWindRight : 0.0);
-formula pDriveUpForDownMove     = (posY > 0               ? pWindUp    : 0.0);
+formula pDriveUpForDownMove     = (posY >= 0               ? pWindUp    : 0.0);
 formula pTotalDriftForDownMove  = pDriftLeftForDownMove + pDriftRightForDownMove + pDriveUpForDownMove;
 formula pForDownMove            = 1 - pTotalDriftForDownMove;
 
@@ -56,7 +56,7 @@ module Drone
 		pDriftRightForDownMove : (posX' = posX + 1) & (posY' = posY + 1) & (d1' = updateD1) & (d2' = updateD2) +
 		pDriveUpForDownMove    : (posY' = posY)     & (d1' = updateD1) & (d2' = updateD2);
 
-	[] reachedTarget -> true;
+	[end] reachedTarget -> true;
 
 endmodule
 
