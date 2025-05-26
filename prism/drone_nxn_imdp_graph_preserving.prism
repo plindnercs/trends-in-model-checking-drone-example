@@ -8,16 +8,16 @@ const int rewardD2 = 10;
 // Wind Probabilities (sum must be smaller than 1, each wind direction must be larger than 0 => graph preservation)
 // going to the left
 const double pWindLeftL  = 0.1;
-const double pWindLeftU  = 0.3;
+const double pWindLeftU  = 0.1;
 // going to the right
-const double pWindRightL = 0.1;
+const double pWindRightL = 0.2;
 const double pWindRightU = 0.3;
 // going up
 const double pWindUpL    = 0.1;
-const double pWindUpU    = 0.3;
+const double pWindUpU    = 0.1;
 // going down
 const double pWindDownL  = 0.1;
-const double pWindDownU  = 0.3;
+const double pWindDownU  = 0.1;
 
 // Locations
 formula reachedTarget = (posX = (gridSize - 1)) & (posY = (gridSize - 1));
@@ -30,8 +30,8 @@ formula pDriftDownForRightMoveL  = (posY < (gridSize - 1)   ? pWindDownL  : 0.0)
 formula pDriftDownForRightMoveU  = (posY < (gridSize - 1)   ? pWindDownU  : 0.0);
 formula pDriftLeftForRightMoveL  = (posX >= 0               ? pWindLeftL  : 0.0);
 formula pDriftLeftForRightMoveU  = (posX >= 0               ? pWindLeftU  : 0.0);
-formula pForRightMoveL           = 0.5; //1 - (pDriftLeftForRightMoveU + pDriftUpForRightMoveU + pDriftDownForRightMoveU);
-formula pForRightMoveU           = 0.8; //1 - (pDriftLeftForRightMoveL + pDriftUpForRightMoveL + pDriftDownForRightMoveL);
+formula pForRightMoveL           = 1 - (pDriftLeftForRightMoveU + pDriftUpForRightMoveU + pDriftDownForRightMoveU);
+formula pForRightMoveU           = 1 - (pDriftLeftForRightMoveL + pDriftUpForRightMoveL + pDriftDownForRightMoveL);
 
 // For DOWN movement
 formula pDriftLeftForDownMoveL   = (posX > 0        	    ? pWindLeftL  : 0.0);
@@ -40,8 +40,8 @@ formula pDriftRightForDownMoveL  = (posX < (gridSize - 1)   ? pWindRightL : 0.0)
 formula pDriftRightForDownMoveU  = (posX < (gridSize - 1)   ? pWindRightU : 0.0);
 formula pDriveUpForDownMoveL     = (posY >= 0               ? pWindUpL    : 0.0);
 formula pDriveUpForDownMoveU     = (posY >= 0               ? pWindUpU    : 0.0);
-formula pForDownMoveL            = 0.5; //1 - (pDriftLeftForDownMoveU + pDriftRightForDownMoveU + pDriveUpForDownMoveU);
-formula pForDownMoveU            = 0.8; //1 - (pDriftLeftForDownMoveL + pDriftRightForDownMoveL + pDriveUpForDownMoveL);
+formula pForDownMoveL            = 1 - (pDriftLeftForDownMoveU + pDriftRightForDownMoveU + pDriveUpForDownMoveU);
+formula pForDownMoveU            = 1 - (pDriftLeftForDownMoveL + pDriftRightForDownMoveL + pDriveUpForDownMoveL);
 
 
 module Drone

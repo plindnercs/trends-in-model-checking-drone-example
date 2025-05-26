@@ -9,7 +9,7 @@ const int rewardD2 = 10;
 // going to the left
 const double pWindLeft  = 0.1;
 // going to the right
-const double pWindRight = 0.1; // turning point at ~ 0.265
+const double pWindRight = 0.3; // turning point at ~ 0.265
 // going up
 const double pWindUp    = 0.1; // 0.0;
 // going down
